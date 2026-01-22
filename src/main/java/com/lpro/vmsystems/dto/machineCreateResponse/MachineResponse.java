@@ -38,7 +38,5 @@ public class MachineResponse {
         this.dateCreation = machine.getDateCreation();
         this.status = machine.getStatus().name();
     }
-
-    // getters
 }
 

@@ -6,7 +6,6 @@ import com.lpro.vmsystems.dto.machineCreateResponse.MachineResponse;
 import com.lpro.vmsystems.dto.machineStatusUpdateRequest.MachineStatusUpdateRequest;
 import com.lpro.vmsystems.dto.machineUpdateRequest.MachineUpdateRequest;
 import com.lpro.vmsystems.infrastruture.entity.Machine;
-import com.lpro.vmsystems.infrastruture.entity.enums.Status;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;

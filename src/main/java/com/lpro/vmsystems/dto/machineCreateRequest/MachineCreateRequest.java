@@ -26,7 +26,5 @@ public class MachineCreateRequest {
     @NotNull
     @Schema(example = "256.0")
     private Double disk;
-
-    // getters e setters
 }
 
