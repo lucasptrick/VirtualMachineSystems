@@ -1,18 +1,24 @@
 package com.lpro.vmsystems.controller;
 
 import com.lpro.vmsystems.business.MachineService;
+import com.lpro.vmsystems.dto.machineCreateRequest.MachineCreateRequest;
+import com.lpro.vmsystems.dto.machineCreateResponse.MachineResponse;
+import com.lpro.vmsystems.dto.machineStatusUpdateRequest.MachineStatusUpdateRequest;
+import com.lpro.vmsystems.dto.machineUpdateRequest.MachineUpdateRequest;
 import com.lpro.vmsystems.infrastruture.entity.Machine;
 import com.lpro.vmsystems.infrastruture.entity.enums.Status;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.net.URI;
+import java.util.List;
 
 @RestController
 @RequestMapping("/machine")
@@ -26,10 +32,10 @@ public class MachineController {
     @ApiResponses(value = {
             @ApiResponse(responseCode = "201", description = "Successfully created"),
             @ApiResponse(responseCode = "400", description = "Bad request"),
-            @ApiResponse(responseCode = "500", description = "Server error")
+            @ApiResponse(responseCode = "500", description = "Internal server error")
     })
-    public ResponseEntity<Void> saveMachine(@RequestBody Machine machine) {
-        Machine savedMachine = machineService.saveMachine(machine);
+    public ResponseEntity<MachineResponse> saveMachine(@RequestBody @Valid MachineCreateRequest request) {
+        Machine savedMachine = machineService.saveMachine(request);
 
         URI location = ServletUriComponentsBuilder
                 .fromCurrentRequest()
@@ -41,16 +47,36 @@ public class MachineController {
     }
 
 
-    @GetMapping
+    @GetMapping("/{id}")
     @Operation(summary = "Find Machine By ID", description = "method for find a virtual machine")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Successed finding"),
             @ApiResponse(responseCode = "404", description = "Not Found"),
-            @ApiResponse(responseCode = "500", description = "Server error")
+            @ApiResponse(responseCode = "500", description = "Internal server error")
     })
-    public ResponseEntity<Machine> findMachineById(@RequestParam Integer id) {
-        return ResponseEntity.ok(machineService.findMachineById(id));
+    public ResponseEntity<MachineResponse> findMachineById(@PathVariable Integer id) {
+        Machine machine = machineService.findMachineById(id);
+        return ResponseEntity.ok(new MachineResponse(machine));
     }
+
+
+    @GetMapping
+    @Operation(
+            summary = "Find all registered machines",
+            description = "Returns a list of all virtual machines"
+    )
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Successfully retrieved machines"),
+            @ApiResponse(responseCode = "500", description = "Internal server error")
+    })
+    public ResponseEntity<List<MachineResponse>> findAllMachines() {
+        List<MachineResponse> machines = machineService.findAllMachines()
+                .stream()
+                .map(MachineResponse::new)
+                .toList();
+        return ResponseEntity.ok(machines);
+    }
+
 
 
     @DeleteMapping
@@ -58,22 +84,22 @@ public class MachineController {
     @ApiResponses(value = {
             @ApiResponse(responseCode = "202", description = "Successed delete"),
             @ApiResponse(responseCode = "404", description = "Not Found"),
-            @ApiResponse(responseCode = "500", description = "Server error")
+            @ApiResponse(responseCode = "500", description = "Internal server error")
     })
-    public ResponseEntity<Void> deleteMachine(@RequestParam Integer id) {
+    public ResponseEntity<Void> deleteMachineById(@RequestParam Integer id) {
         machineService.deleteMachineById(id);
         return ResponseEntity.noContent().build();
     }
 
 
-    @PutMapping
+    @PutMapping("/{id}")
     @Operation(summary = "Update Machine By ID", description = "method for update a virtual machine")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Successed update"),
             @ApiResponse(responseCode = "404", description = "Not Found"),
-            @ApiResponse(responseCode = "500", description = "Server error")
+            @ApiResponse(responseCode = "500", description = "Internal server error")
     })
-    public ResponseEntity<Void> updateMachine(@RequestParam Integer id, @RequestBody Machine machine) {
+    public ResponseEntity<Void> updateMachineById(@PathVariable Integer id, @RequestBody MachineUpdateRequest machine) {
         machineService.updateMachineById(id, machine);
         return ResponseEntity.ok().build();
     }
@@ -84,10 +110,10 @@ public class MachineController {
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Successed status update"),
             @ApiResponse(responseCode = "404", description = "Not Found"),
-            @ApiResponse(responseCode = "500", description = "Server error")
+            @ApiResponse(responseCode = "500", description = "Internal server error")
     })
-    public ResponseEntity<Machine> changeStatus(@PathVariable Integer id, @RequestParam Status status) {
-        machineService.changeMachineStatus(id, status);
+    public ResponseEntity<Void> changeStatusMachineById(@PathVariable Integer id, @RequestBody MachineStatusUpdateRequest status) {
+        machineService.changeMachineStatus(id, status.getStatus());
         return ResponseEntity.noContent().build();
     }
 

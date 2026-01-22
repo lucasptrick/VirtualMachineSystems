@@ -1,19 +1,34 @@
 package com.lpro.vmsystems.business;
 
+import com.lpro.vmsystems.dto.machineCreateRequest.MachineCreateRequest;
+import com.lpro.vmsystems.dto.machineUpdateRequest.MachineUpdateRequest;
 import com.lpro.vmsystems.infrastruture.entity.Machine;
 import com.lpro.vmsystems.infrastruture.entity.enums.Status;
 import com.lpro.vmsystems.infrastruture.entity.repository.MachineRepositoy;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
+import java.util.List;
+
 @Service
 @RequiredArgsConstructor
 public class MachineService {
     private final MachineRepositoy machineRepository;
 
-    public Machine saveMachine(Machine machine){
-        machineRepository.saveAndFlush(machine);
-        return machine;
+    public Machine saveMachine(MachineCreateRequest request){
+        Machine machine = new Machine();
+        machine.setName(request.getName());
+        machine.setCpu(request.getCpu());
+        machine.setMemory(request.getMemory());
+        machine.setDisk(request.getDisk());
+
+        machine.setStatus(Status.STARTED);
+        machine.setDateCreation(LocalDateTime.now());
+
+
+        return machineRepository.saveAndFlush(machine);
+
     }
 
     public Machine findMachineById(Integer id){
@@ -22,30 +37,27 @@ public class MachineService {
         );
     }
 
-    public void updateMachineById(Integer id, Machine machine){
+    public List<Machine> findAllMachines() {
+        List<Machine> machines = machineRepository.findAll();
+
+        if (machines.isEmpty()) {
+            throw new RuntimeException("No virtual machines registered");
+        }
+
+        return machines;
+    }
+
+
+
+    public void updateMachineById(Integer id, MachineUpdateRequest machine) {
         Machine machineEntity = findMachineById(id);
 
-        Machine machineUpdate = Machine.builder()
-                .name(machine.getName() != null ?
-                        machine.getName() : machineEntity.getName())
+        if (machine.getName() != null) machineEntity.setName(machine.getName());
+        if (machine.getCpu() != null) machineEntity.setCpu(machine.getCpu());
+        if (machine.getMemory() != null) machineEntity.setMemory(machine.getMemory());
+        if (machine.getDisk() != null) machineEntity.setDisk(machine.getDisk());
 
-                .cpu(machine.getCpu() != null ?
-                        machine.getCpu() : machineEntity.getCpu())
-
-                .memory(machine.getMemory() != null ?
-                        machine.getMemory() : machineEntity.getMemory())
-
-                .disk(machine.getDisk() != null ?
-                        machine.getDisk() : machineEntity.getDisk())
-
-                .status(machine.getStatus() != null ?
-                        machine.getStatus() : machineEntity.getStatus())
-
-                .id(machineEntity.getId())
-                .dateCreation(machineEntity.getDateCreation())
-                .build();
-
-        machineRepository.save(machineUpdate);
+        machineRepository.save(machineEntity);
     }
 
     public void changeMachineStatus(Integer id, Status status){

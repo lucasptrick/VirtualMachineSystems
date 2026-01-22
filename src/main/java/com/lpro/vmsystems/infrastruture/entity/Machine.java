@@ -32,11 +32,11 @@ public class Machine {
 
     @Positive(message = "Must have positive values.")
     @Column(name = "memory")
-    private Float memory;
+    private Double memory;
 
     @Positive(message = "Must have positive values.")
     @Column(name = "disk")
-    private Float disk;
+    private Double disk;
 
     @Column(name = "dateCreation", updatable = false)
     private LocalDateTime dateCreation;

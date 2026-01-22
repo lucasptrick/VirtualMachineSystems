@@ -10,4 +10,5 @@ public class VmsystemsApplication {
 		SpringApplication.run(VmsystemsApplication.class, args);
 	}
 
+
 }
