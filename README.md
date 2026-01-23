@@ -93,7 +93,7 @@ spring.jpa.show-sql=false
 1. **Clone o repositório:**
 > Obs: Certifique-se de pegar a versão mais atual, v2-Authentication from branch
 ``` properties
-url
+https://github.com/lucasptrick/VirtualMachineSystems.git
 ```
 
 2. **Escolher um dos perfis nas propriedades da aplicação:**
