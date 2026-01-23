@@ -91,6 +91,7 @@ spring.jpa.show-sql=false
 # Como iniciar a aplicação
 
 1. **Clone o repositório:**
+> Obs: Certifique-se de pegar a versão mais atual, v2-Authentication from branch
 ``` properties
 url
 ```
