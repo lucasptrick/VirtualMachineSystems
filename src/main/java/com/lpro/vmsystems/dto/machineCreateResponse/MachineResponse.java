@@ -5,7 +5,7 @@ import lombok.Getter;
 
 import java.time.LocalDateTime;
 @Getter
-@Schema(description = "Dados retornados de uma Machine")
+@Schema(description = "Data returned from a Machine")
 public class MachineResponse {
 
     @Schema(example = "1")

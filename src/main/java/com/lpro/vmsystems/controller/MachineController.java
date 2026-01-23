@@ -33,8 +33,10 @@ public class MachineController {
             @ApiResponse(responseCode = "400", description = "Bad request"),
             @ApiResponse(responseCode = "500", description = "Internal server error")
     })
-    public ResponseEntity<MachineResponse> saveMachine(@RequestBody @Valid MachineCreateRequest request) {
-        Machine savedMachine = machineService.saveMachine(request);
+    public ResponseEntity<MachineResponse> saveMachine(
+            @RequestHeader("X-USER-ID") Integer userId,
+            @RequestBody @Valid MachineCreateRequest request) {
+        Machine savedMachine = machineService.saveMachine(request,  userId);
 
         URI location = ServletUriComponentsBuilder
                 .fromCurrentRequest()
@@ -75,6 +77,16 @@ public class MachineController {
                 .toList();
         return ResponseEntity.ok(machines);
     }
+
+
+    @GetMapping("/{userId}/machines")
+    @Operation(summary = "Find all machines from user")
+    public ResponseEntity<List<MachineResponse>> findMachinesByUser(
+            @PathVariable Integer userId
+    ) {
+        return ResponseEntity.ok(machineService.findByUser(userId));
+    }
+
 
 
 

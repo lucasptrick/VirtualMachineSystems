@@ -45,6 +45,11 @@ public class Machine {
     @Column(name = "status", nullable = false)
     private Status status;
 
+    @ManyToOne
+    @JoinColumn(name = "user_id")
+    private User user;
+
+
 
     @PrePersist
     public void prePersist() {

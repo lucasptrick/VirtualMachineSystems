@@ -8,7 +8,7 @@ import lombok.Setter;
 
 @Getter
 @Setter
-@Schema(description = "Dados para criação de uma Machine")
+@Schema(description = "Data for creating a Machine")
 public class MachineCreateRequest {
 
     @NotBlank
@@ -26,5 +26,6 @@ public class MachineCreateRequest {
     @NotNull
     @Schema(example = "256.0")
     private Double disk;
+
 }
 

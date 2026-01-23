@@ -1,10 +1,13 @@
 package com.lpro.vmsystems.business;
 
 import com.lpro.vmsystems.dto.machineCreateRequest.MachineCreateRequest;
+import com.lpro.vmsystems.dto.machineCreateResponse.MachineResponse;
 import com.lpro.vmsystems.dto.machineUpdateRequest.MachineUpdateRequest;
 import com.lpro.vmsystems.infrastruture.entity.Machine;
+import com.lpro.vmsystems.infrastruture.entity.User;
 import com.lpro.vmsystems.infrastruture.entity.enums.Status;
-import com.lpro.vmsystems.infrastruture.entity.repository.MachineRepositoy;
+import com.lpro.vmsystems.infrastruture.entity.repository.MachineRepository;
+import com.lpro.vmsystems.infrastruture.entity.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -14,9 +17,15 @@ import java.util.List;
 @Service
 @RequiredArgsConstructor
 public class MachineService {
-    private final MachineRepositoy machineRepository;
+    private final MachineRepository machineRepository;
+    private final UserRepository userRepository;
+    private final AuthService authService;
 
-    public Machine saveMachine(MachineCreateRequest request){
+    public Machine saveMachine(MachineCreateRequest request, Integer userId) {
+
+        User loggedUser = authService.getAuthenticatedUser(userId);
+
+
         Machine machine = new Machine();
         machine.setName(request.getName());
         machine.setCpu(request.getCpu());
@@ -25,6 +34,7 @@ public class MachineService {
 
         machine.setStatus(Status.STARTED);
         machine.setDateCreation(LocalDateTime.now());
+        machine.setUser(loggedUser);
 
 
         return machineRepository.saveAndFlush(machine);
@@ -46,6 +56,22 @@ public class MachineService {
 
         return machines;
     }
+
+    public List<MachineResponse> findByUser(Integer userId) {
+
+        List<Machine> machines = machineRepository.findByUserId(userId);
+
+        if (machines.isEmpty()) {
+            throw new RuntimeException("User has no machines");
+        }
+
+        return machines
+                .stream()
+                .map(MachineResponse::new) // 👈 usa o construtor que recebe Machine
+                .toList();
+    }
+
+
 
 
 
