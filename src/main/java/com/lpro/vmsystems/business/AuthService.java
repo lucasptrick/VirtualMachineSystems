@@ -17,8 +17,13 @@ public class AuthService {
 
     public LoginResponseDTO login(LoginRequestDTO request) {
 
+        System.out.println("EMAIL REQ: " + request.getEmail());
+        System.out.println("PASS REQ: " + request.getPassword());
+
         User user = userRepository.findByEmail(request.getEmail())
                 .orElseThrow(() -> new RuntimeException("Invalid email or password"));
+
+        System.out.println("PASS DB: " + user.getPassword());
 
         if (!user.getPassword().equals(request.getPassword())) {
             throw new RuntimeException("Invalid email or password");
